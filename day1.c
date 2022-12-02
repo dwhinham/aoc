@@ -11,40 +11,15 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "util.h"
+
 #define INPUT_FILE "day1_input.txt"
-#define ARRAY_SIZE(X) (sizeof(X) / sizeof(*X))
 
 typedef struct
 {
     uint32_t index;
     uint32_t calories;
 } elf_t;
-
-long file_size(FILE* f)
-{
-    long current_pos = ftell(f);
-    fseek(f, 0, SEEK_END);
-    size_t size = ftell(f);
-    fseek(f, current_pos, SEEK_SET);
-    return size;
-}
-
-char* read_file(const char* path, size_t* out_size)
-{
-    FILE* f = fopen(path, "r");
-    if (f == NULL)
-    {
-        fprintf(stderr, "Couldn't open %s for reading\n", path);
-        return NULL;
-    }
-
-    *out_size = file_size(f);
-    char* text = malloc(*out_size);
-    fread(text, 1, *out_size, f);
-    fclose(f);
-
-    return text;
-}
 
 int main(int argc, char** argv)
 {
