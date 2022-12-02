@@ -2,7 +2,7 @@
 // Advent of Code 2022 - Day 1
 // Dale Whinham
 //
-// $ gcc day1.c -o day1
+// $ gcc day1.c -Wall -Wextra -Wpedantic -Werror -o day1
 // $ ./day1
 // ----------------------------------------------------------------------------
 
