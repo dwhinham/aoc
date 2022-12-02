@@ -11,8 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "util.h"
-
 #define INPUT_FILE "day2_input.txt"
 
 #define PART_TWO
@@ -43,20 +41,18 @@ int main(int argc, char** argv)
     (void)argc;
     (void)argv;
 
-    size_t size;
-    char* text = read_file(INPUT_FILE, &size);
-    if (text == NULL)
+    FILE* f = fopen(INPUT_FILE, "r");
+    if (f == NULL)
         return EXIT_FAILURE;
 
     uint32_t score_player = 0;
     uint32_t score_opponent = 0;
 
-    char* token = strtok(text, " \n");
-    while (token)
+    char opponent_move, player_move;
+    while (fscanf(f, "%c %c\n", &opponent_move, &player_move) == 2)
     {
-        int opponent_move = *token - 'A';
-        token = strtok(NULL, " \n");
-        int player_move = *token - 'X';
+        opponent_move -= 'A';
+        player_move -= 'X';
 
 #ifdef PART_TWO
         switch (player_move)
@@ -97,8 +93,6 @@ int main(int argc, char** argv)
         // Opponent wins
         else
             score_opponent += SCORE_WIN;
-
-        token = strtok(NULL, " \n");
     }
 
     printf(
@@ -108,6 +102,6 @@ int main(int argc, char** argv)
         score_opponent
     );
 
-    free(text);
+    fclose(f);
     return EXIT_SUCCESS;
 }
