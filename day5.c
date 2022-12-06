@@ -28,12 +28,17 @@ typedef struct
 static size_t num_stacks = 0;
 static stack_t stacks[MAX_STACKS];
 
-static inline void stack_crate(size_t stack_index, char crate)
+static inline void reverse_array(char* arr, size_t len)
 {
-    stack_t* dst = &stacks[stack_index];
-    memmove(dst->crates + 1, dst->crates, dst->num_crates * sizeof(char));
-    dst->crates[0] = crate;
-    ++dst->num_crates;
+    char* p1 = arr;
+    char* p2 = arr + len - 1;
+
+    while (p1 < p2)
+    {
+        char tmp = *p1;
+        *p1++ = *p2;
+        *p2-- = tmp;
+    }
 }
 
 static inline void move_crates(size_t count, size_t src_index, size_t dst_index)
@@ -85,11 +90,15 @@ int main(int argc, char** argv)
             if (buffer[i] == '[' && buffer[i + 2] == ']')
             {
                 char crate = buffer[i + 1];
-                size_t stack_index = i / 4;
-                stack_crate(stack_index, crate);
+                stack_t* dst = &stacks[i / 4];
+                dst->crates[dst->num_crates++] = crate;
             }
         }
     }
+
+    // Reverse stack arrays as we built them top-down
+    for (size_t i = 0; i < num_stacks; ++i)
+        reverse_array(stacks[i].crates, stacks[i].num_crates);
 
     // Perform crate movements
     int count, src, dst;
