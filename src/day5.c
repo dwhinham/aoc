@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INPUT_FILE "day5_input.txt"
+#define INPUT_FILE "input/day5.txt"
 
 #define PART_TWO
 

@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INPUT_FILE "day3_input.txt"
+#define INPUT_FILE "input/day3.txt"
 
 #define MAX_ITEMS (26 * 2) // a-z, A-Z
 #define ITEM_BITPOS(CHAR) (CHAR >= 'a' ? CHAR - 'a' : CHAR - 'A' + 26)

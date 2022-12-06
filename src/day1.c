@@ -13,7 +13,7 @@
 
 #include "util.h"
 
-#define INPUT_FILE "day1_input.txt"
+#define INPUT_FILE "input/day1.txt"
 
 typedef struct
 {

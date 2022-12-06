@@ -1,12 +1,12 @@
 CC=gcc
-CFLAGS=-Wall -Wextra -Wpedantic -Werror
+CFLAGS=-Iinclude -Wall -Wextra -Wpedantic -Werror
 
-DAYS=$(patsubst %.c,%,$(wildcard day*.c))
+DAYS=$(patsubst src/%.c,%,$(wildcard src/day*.c))
 
 .PHONY: all clean
 all: ${DAYS}
 
-%: %.c
+%: src/%.c
 	@echo CC $@
 	@$(CC) $(CFLAGS) $< -o $@
 

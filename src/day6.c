@@ -20,7 +20,7 @@
 #define MARKER_LEN 4
 #endif
 
-#define INPUT_FILE "day6_input.txt"
+#define INPUT_FILE "input/day6.txt"
 
 int main()
 {

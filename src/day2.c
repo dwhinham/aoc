@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define INPUT_FILE "day2_input.txt"
+#define INPUT_FILE "input/day2.txt"
 
 #define PART_TWO
 
