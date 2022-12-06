@@ -15,11 +15,8 @@
 
 #define PART_TWO
 
-int main(int argc, char** argv)
+int main()
 {
-    (void)argc;
-    (void)argv;
-
     FILE* f = fopen(INPUT_FILE, "r");
     if (f == NULL)
         return EXIT_FAILURE;

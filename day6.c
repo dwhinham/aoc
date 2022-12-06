@@ -22,11 +22,8 @@
 
 #define INPUT_FILE "day6_input.txt"
 
-int main(int argc, char** argv)
+int main()
 {
-    (void)argc;
-    (void)argv;
-
     size_t size;
     char* message = read_file(INPUT_FILE, &size);
 

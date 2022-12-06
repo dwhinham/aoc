@@ -20,11 +20,8 @@
 
 #define PART_TWO
 
-int main(int argc, char** argv)
+int main()
 {
-    (void)argc;
-    (void)argv;
-
     FILE* f = fopen(INPUT_FILE, "r");
     if (f == NULL)
         return EXIT_FAILURE;
@@ -44,7 +41,7 @@ int main(int argc, char** argv)
         uint64_t this_bag = 0;
         for (size_t i = 0; i < len; ++i)
             this_bag |= ITEM_BITMASK(buffer[i]);
-        
+
         // Bitwise AND to find common items
         group_items &= this_bag;
 

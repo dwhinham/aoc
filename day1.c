@@ -21,11 +21,8 @@ typedef struct
     uint32_t calories;
 } elf_t;
 
-int main(int argc, char** argv)
+int main()
 {
-    (void)argc;
-    (void)argv;
-
     size_t size;
     char* text = read_file(INPUT_FILE, &size);
     if (text == NULL)

@@ -57,11 +57,8 @@ static inline void move_crates(size_t count, size_t src_index, size_t dst_index)
 #endif
 }
 
-int main(int argc, char** argv)
+int main()
 {
-    (void)argc;
-    (void)argv;
-
     FILE* f = fopen(INPUT_FILE, "r");
     if (f == NULL)
         return EXIT_FAILURE;

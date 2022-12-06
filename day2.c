@@ -36,11 +36,8 @@ enum
 // 2 - 1 =  1 (loss)
 // 2 - 2 =  0 (draw)
 
-int main(int argc, char** argv)
+int main()
 {
-    (void)argc;
-    (void)argv;
-
     FILE* f = fopen(INPUT_FILE, "r");
     if (f == NULL)
         return EXIT_FAILURE;
@@ -95,7 +92,8 @@ int main(int argc, char** argv)
             score_opponent += SCORE_WIN;
     }
 
-    printf(
+    printf
+    (
         "Player score:   %d\n"
         "Opponent score: %d\n",
         score_player,
