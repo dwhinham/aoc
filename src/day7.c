@@ -146,42 +146,26 @@ int main()
 {
     FILE* f = fopen(INPUT_FILE, "r");
 
-    bool listing = false;
     dir_node_t* current_dir = &root;
-
     char line_buffer[512];
-    char filename_buffer[64];
+    char name_buffer[64];
+    size_t file_size;
+
     while (fgets(line_buffer, sizeof(line_buffer), f))
     {
-        if (listing)
+        if (sscanf(line_buffer, "$ cd %s\n", name_buffer) == 1)
         {
-            size_t file_size;
-            if (sscanf(line_buffer, "%zu %s\n", &file_size, filename_buffer) == 2)
-            {
-                add_node(current_dir, TYPE_FILE, filename_buffer, file_size);
-                continue;
-            }
-
-            if (sscanf(line_buffer, "dir %s\n", filename_buffer) == 1)
-            {
-                add_node(current_dir, TYPE_DIRECTORY, filename_buffer, 0);
-                continue;
-            }
-
-            listing = false;
-        }
-
-        if (sscanf(line_buffer, "$ cd %s\n", filename_buffer) == 1)
-        {
-            if (strcmp(filename_buffer, "/") == 0)
+            if (name_buffer[0] == '/')
                 current_dir = &root;
-            else if (strcmp(filename_buffer, "..") == 0)
+            else if (name_buffer[0] == '.')
                 current_dir = current_dir->parent;
             else
-                current_dir = find_subdir(current_dir, filename_buffer);
+                current_dir = find_subdir(current_dir, name_buffer);
         }
-        else if (strcmp(line_buffer, "$ ls\n") == 0)
-            listing = true;
+        else if (sscanf(line_buffer, "%zu %s\n", &file_size, name_buffer) == 2)
+            add_node(current_dir, TYPE_FILE, name_buffer, file_size);
+        else if (sscanf(line_buffer, "dir %s\n", name_buffer) == 1)
+            add_node(current_dir, TYPE_DIRECTORY, name_buffer, 0);
     }
 
     compute_dir_sizes(&root);
