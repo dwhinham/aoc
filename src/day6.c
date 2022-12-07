@@ -6,6 +6,7 @@
 // $ ./day6
 // ----------------------------------------------------------------------------
 
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,31 +23,30 @@
 
 #define INPUT_FILE "input/day6.txt"
 
-int main()
+static inline bool all_unique(const char* string, size_t len)
 {
-    size_t size;
-    char* message = read_file(INPUT_FILE, &size);
-
-    char* p = message;
-    while (p < message + size - MARKER_LEN)
+    for (size_t i = 0; i < len; ++i)
     {
-        for (uint8_t i = 0; i < MARKER_LEN; ++i)
+        for (size_t j = i + 1; j < len; ++j)
         {
-            for (uint8_t j = i + 1; j < MARKER_LEN; ++j)
-            {
-                if (p[i] == p[j])
-                    goto next;
-            }
+            if (string[i] == string[j])
+                return false;
         }
-
-        // Found unique marker
-        break;
-
-    next:
-        ++p;
     }
 
-    size_t offset = p - message + MARKER_LEN;
+    return true;
+}
+
+int main()
+{
+    size_t size, offset = 0;
+    char* message = read_file(INPUT_FILE, &size);
+
+    // Find unique marker
+    while (!all_unique(&message[offset], MARKER_LEN))
+        ++offset;
+
+    offset += MARKER_LEN;
     printf("Marker offset: %zu\n", offset);
 
     free(message);
