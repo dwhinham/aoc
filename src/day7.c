@@ -53,46 +53,33 @@ static dir_node_t* find_subdir(const dir_node_t* node, const char* name)
     return NULL;
 }
 
-static void add_node(dir_node_t* node, dir_type_t type, const char* name, size_t size)
+static void add_node(dir_node_t* parent, dir_type_t type, const char* name, size_t size)
 {
-    ++node->num_children;
-    node->children = realloc(node->children, node->num_children * sizeof(dir_node_t));
+    ++parent->num_children;
+    parent->children = realloc(parent->children, parent->num_children * sizeof(dir_node_t));
 
-    dir_node_t* dest = &node->children[node->num_children - 1];
-    *dest = (dir_node_t)
-    {
-        .type = type,
-        .size = size,
-        .parent = node,
-        .children = NULL,
-        .num_children = 0,
-    };
-    strcpy(dest->name, name);
+    dir_node_t* node = &parent->children[parent->num_children - 1];
+    node->type = type;
+    strcpy(node->name, name);
+    node->size = size;
+    node->parent = parent;
+    node->children = NULL;
+    node->num_children = 0;
+
+    if (type == TYPE_FILE)
+        do parent->size += size; while ((parent = parent->parent));
 }
 
 static void print_directory_tree(dir_node_t* node, size_t depth)
 {
     if (node->type == TYPE_FILE)
-        printf("%*s- %s (file, size=%zu)\n", (int)depth, "", node->name, node->size);
+        printf("%*s- %s (file, size=%zu)\n", (int)depth * 4, "", node->name, node->size);
     else
     {
-        printf("%*s- %s (dir)\n", (int)depth, "", node->name);
+        printf("%*s- %s (dir)\n", (int)depth * 4, "", node->name);
         for (size_t i = 0; i < node->num_children; ++i)
             print_directory_tree(&node->children[i], depth + 1);
     }
-}
-
-static size_t compute_dir_sizes(dir_node_t* node)
-{
-    if (node->type == TYPE_FILE)
-        return node->size;
-
-    size_t size = 0;
-    for (size_t i = 0; i < node->num_children; ++i)
-        size += compute_dir_sizes(&node->children[i]);
-
-    node->size = size;
-    return size;
 }
 
 static size_t find_large_dirs(dir_node_t* node)
@@ -168,18 +155,24 @@ int main()
             add_node(current_dir, TYPE_DIRECTORY, name_buffer, 0);
     }
 
-    compute_dir_sizes(&root);
     print_directory_tree(&root, 0);
 
     size_t sum_large_dir_sizes = find_large_dirs(&root);
     size_t free_space = TOTAL_DISK_SPACE - root.size;
-    size_t deletion_target = FREE_SPACE_REQUIRED - free_space;
-    dir_node_t* deletion_candidate = find_deletion_candidate(&root, deletion_target);
+    size_t additional_space = FREE_SPACE_REQUIRED - free_space;
+    dir_node_t* deletion_candidate = find_deletion_candidate(&root, additional_space);
 
-    printf("Free space:                   %zu\n", free_space);
-    printf("Sum of large directory sizes: %zu\n", sum_large_dir_sizes);
-    printf("Deletion target size:         %zu\n", deletion_target);
-    printf("Deletion candidate size:      %zu\n", deletion_candidate->size);
+    printf
+    (
+        "Free space:                   %zu\n"
+        "Sum of large directory sizes: %zu\n"
+        "Additional space required:    %zu\n"
+        "Deletion candidate size:      %zu\n",
+        free_space,
+        sum_large_dir_sizes,
+        additional_space,
+        deletion_candidate->size
+    );
 
     free_directory_tree(&root);
     fclose(f);
