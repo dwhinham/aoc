@@ -132,6 +132,8 @@ static void free_directory_tree(dir_node_t* node)
 int main()
 {
     FILE* f = fopen(INPUT_FILE, "r");
+    if (f == NULL)
+        return EXIT_FAILURE;
 
     dir_node_t* current_dir = &root;
     char line_buffer[512];

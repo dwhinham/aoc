@@ -62,6 +62,8 @@ static inline uint32_t compute_scenic_score(size_t x, size_t y)
 int main()
 {
     FILE* f = fopen(INPUT_FILE, "r");
+    if (f == NULL)
+        return EXIT_FAILURE;
 
     char line_buffer[512];
     while (fgets(line_buffer, sizeof(line_buffer), f))
