@@ -18,21 +18,12 @@ typedef enum { DIR_NORTH, DIR_EAST, DIR_SOUTH, DIR_WEST, DIR_MAX } direction_t;
 
 typedef struct
 {
-    int8_t visibility[DIR_MAX];
+    uint8_t visibility;
     uint8_t height;
 } tree_t;
 
 static tree_t** tree_grid;
 static size_t grid_w = 0, grid_h = 0;
-
-static inline bool is_visible(const tree_t* tree)
-{
-    for (uint8_t dir = DIR_NORTH; dir < DIR_MAX; ++dir)
-        if (tree->height > tree->visibility[dir])
-            return true;
-
-    return false;
-}
 
 static uint32_t scenic_score_direction(size_t x, size_t y, direction_t dir)
 {
@@ -82,7 +73,7 @@ int main()
         tree_grid[grid_h - 1] = malloc(grid_w * sizeof(**tree_grid));
 
         for (size_t i = 0; i < grid_w; ++i)
-            tree_grid[grid_h - 1][i].height = line_buffer[i] - '0';
+            tree_grid[grid_h - 1][i] = (tree_t) { .height = line_buffer[i] - '0', .visibility = 0, };
     }
 
     // Compute east-west visibility
@@ -93,14 +84,17 @@ int main()
 
         for (size_t x = 0; x < grid_w; ++x)
         {
-            tree_grid[y][grid_w - 1 - x].visibility[DIR_EAST] = max_east;
-            tree_grid[y][x].visibility[DIR_WEST] = max_west;
-
             if (tree_grid[y][grid_w - 1 - x].height > max_east)
+            {
                 max_east = tree_grid[y][grid_w - 1 - x].height;
+                tree_grid[y][grid_w - 1 - x].visibility |= (1 << DIR_EAST);
+            }
 
             if (tree_grid[y][x].height > max_west)
+            {
                 max_west = tree_grid[y][x].height;
+                tree_grid[y][x].visibility |= (1 << DIR_WEST);
+            }
         }
     }
 
@@ -112,14 +106,17 @@ int main()
 
         for (size_t y = 0; y < grid_h; ++y)
         {
-            tree_grid[grid_h - 1 - y][x].visibility[DIR_SOUTH] = max_south;
-            tree_grid[y][x].visibility[DIR_NORTH] = max_north;
-
             if (tree_grid[grid_h - 1 - y][x].height > max_south)
+            {
                 max_south = tree_grid[grid_h - 1 - y][x].height;
+                tree_grid[grid_h - 1 - y][x].visibility |= (1 << DIR_SOUTH);
+            }
 
             if (tree_grid[y][x].height > max_north)
+            {
                 max_north = tree_grid[y][x].height;
+                tree_grid[y][x].visibility |= (1 << DIR_NORTH);
+            }
         }
     }
 
@@ -131,14 +128,13 @@ int main()
         for (size_t x = 0; x < grid_w; ++x)
         {
             tree_t* tree = &tree_grid[y][x];
-            bool visible = is_visible(tree);
-            visible_count += visible;
+            visible_count += !!tree->visibility;
 
             uint32_t scenic_score = compute_scenic_score(x, y);
             if (scenic_score > best_scenic_score)
                 best_scenic_score = scenic_score;
 
-            if (visible)
+            if (tree->visibility)
                 printf("\033[1;32m%d\033[0m", tree->height);
             else
                 printf("\033[1;90m%d\033[0m", tree->height);
